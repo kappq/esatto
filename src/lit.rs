@@ -1,0 +1,29 @@
+use crate::var::Var;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Lit(u32);
+
+impl Lit {
+    pub fn new(var: Var, sign: bool) -> Lit {
+        Lit(var << 1 | sign as u32)
+    }
+
+    pub fn var(self) -> Var {
+        self.0 >> 1
+    }
+
+    pub fn sign(self) -> bool {
+        self.0 & 1 == 1
+    }
+}
+
+impl std::fmt::Display for Lit {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let var = self.var();
+        if self.sign() {
+            write!(f, "x{}", var)
+        } else {
+            write!(f, "¬x{}", var)
+        }
+    }
+}
