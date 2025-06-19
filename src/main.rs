@@ -1,13 +1,4 @@
-mod clause;
-mod formula;
-mod lit;
-mod parser;
-mod solver;
-
-use crate::{
-    parser::parse_dimacs,
-    solver::{SatResult, solve},
-};
+use esatto::{SatResult, parse_dimacs, solve};
 
 fn main() {
     let args = std::env::args().collect::<Vec<_>>();
@@ -20,6 +11,7 @@ fn main() {
     match formula {
         Ok(formula) => {
             println!("{}", formula);
+
             match solve(&formula) {
                 SatResult::Sat(assignment) => {
                     println!("SAT");
