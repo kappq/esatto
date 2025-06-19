@@ -3,9 +3,15 @@ use std::collections::HashMap;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Lit(u32);
 
+impl From<i32> for Lit {
+    fn from(value: i32) -> Self {
+        Self::new(value.abs() as u32, value > 0)
+    }
+}
+
 impl Lit {
-    pub fn new(var: u32, sign: bool) -> Lit {
-        Lit(var << 1 | sign as u32)
+    pub fn new(var: u32, sign: bool) -> Self {
+        Self(var << 1 | sign as u32)
     }
 
     pub fn var(self) -> u32 {

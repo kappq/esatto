@@ -14,6 +14,10 @@ impl Formula {
         }
     }
 
+    pub fn from_clauses(clauses: Vec<Clause>) -> Self {
+        Self { clauses }
+    }
+
     pub fn add_clause(&mut self, clause: Clause) {
         self.clauses.push(clause);
     }

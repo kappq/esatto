@@ -1,6 +1,6 @@
 use std::{io::BufRead, str::FromStr};
 
-use crate::{clause::Clause, formula::Formula, lit::Lit};
+use crate::{clause::Clause, formula::Formula};
 
 #[derive(Debug)]
 pub enum ParseError {
@@ -59,7 +59,7 @@ pub fn parse_dimacs(filename: &str) -> Result<Formula, ParseError> {
                     if lit == 0 {
                         break;
                     }
-                    clause.add_literal(Lit::new(lit.abs() as u32, lit > 0));
+                    clause.add_literal(lit.into());
                 }
                 formula.add_clause(clause);
             }

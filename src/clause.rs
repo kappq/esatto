@@ -12,6 +12,16 @@ impl Clause {
         Self { lits: Vec::new() }
     }
 
+    pub fn from_lits<I>(lits: I) -> Self
+    where
+        I: IntoIterator,
+        I::Item: Into<Lit>,
+    {
+        Self {
+            lits: lits.into_iter().map(|lit| lit.into()).collect(),
+        }
+    }
+
     pub fn add_literal(&mut self, lit: Lit) {
         self.lits.push(lit);
     }
