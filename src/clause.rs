@@ -17,7 +17,11 @@ impl Clause {
     }
 
     pub fn eval(&self, assignment: &HashMap<u32, bool>) -> Option<bool> {
-        if self.lits.iter().any(|lit| lit.eval(assignment) == Some(true)) {
+        if self
+            .lits
+            .iter()
+            .any(|lit| lit.eval(assignment) == Some(true))
+        {
             return Some(true);
         }
 

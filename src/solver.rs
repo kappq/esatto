@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::formula::Formula;
+use crate::{formula::Formula, lit::Lit};
 
 pub enum SatResult {
     Sat(HashMap<u32, bool>),
@@ -8,34 +8,53 @@ pub enum SatResult {
 }
 
 pub fn solve(formula: &Formula) -> SatResult {
-    let mut assignment = HashMap::new();
-    dpll(formula, &mut assignment)
+    let assignment = HashMap::new();
+    dpll(formula, assignment)
 }
 
-fn dpll(formula: &Formula, assignment: &mut HashMap<u32, bool>) -> SatResult {
-    // TODO: unit propagation
+fn dpll(formula: &Formula, mut assignment: HashMap<u32, bool>) -> SatResult {
+    while let Some(lit) = get_unit_lit(formula, &assignment) {
+        assignment.insert(lit.var(), lit.sign());
+    }
 
-    match formula.eval(assignment) {
+    match formula.eval(&assignment) {
         Some(true) => SatResult::Sat(assignment.clone()),
         Some(false) => SatResult::Unsat,
         None => {
-            if let Some(var) = choose_unassigned_var(formula, assignment) {
-                assignment.insert(var, true);
-                if let SatResult::Sat(assignment) = dpll(formula, assignment) {
-                    return SatResult::Sat(assignment);
+            if let Some(var) = choose_unassigned_var(formula, &assignment) {
+                let mut assignment_true = assignment.clone();
+                assignment_true.insert(var, true);
+                if let SatResult::Sat(assignment_true) = dpll(formula, assignment_true) {
+                    return SatResult::Sat(assignment_true);
                 }
 
-                assignment.insert(var, false);
-                if let SatResult::Sat(assignment) = dpll(formula, assignment) {
-                    return SatResult::Sat(assignment);
+                let mut assignment_false = assignment.clone();
+                assignment_false.insert(var, false);
+                if let SatResult::Sat(assignment_false) = dpll(formula, assignment_false) {
+                    return SatResult::Sat(assignment_false);
                 }
-
-                assignment.remove(&var);
             }
 
             SatResult::Unsat
         }
     }
+}
+
+fn get_unit_lit(formula: &Formula, assignment: &HashMap<u32, bool>) -> Option<Lit> {
+    for clause in &formula.clauses {
+        if clause.eval(assignment) == Some(true) {
+            continue;
+        }
+        let unassigned_lits = clause
+            .lits
+            .iter()
+            .filter(|lit| !assignment.contains_key(&lit.var()))
+            .collect::<Vec<_>>();
+        if unassigned_lits.len() == 1 {
+            return Some(*unassigned_lits[0]);
+        }
+    }
+    None
 }
 
 fn choose_unassigned_var(formula: &Formula, assignment: &HashMap<u32, bool>) -> Option<u32> {

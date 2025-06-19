@@ -17,7 +17,9 @@ impl Lit {
     }
 
     pub fn eval(self, assignment: &HashMap<u32, bool>) -> Option<bool> {
-        assignment.get(&self.var()).map(|value| *value == self.sign())
+        assignment
+            .get(&self.var())
+            .map(|value| *value == self.sign())
     }
 }
 

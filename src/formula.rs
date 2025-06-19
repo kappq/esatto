@@ -19,11 +19,19 @@ impl Formula {
     }
 
     pub fn eval(&self, assignment: &HashMap<u32, bool>) -> Option<bool> {
-        if self.clauses.iter().any(|clause| clause.eval(assignment) == Some(false)) {
+        if self
+            .clauses
+            .iter()
+            .any(|clause| clause.eval(assignment) == Some(false))
+        {
             return Some(false);
         }
 
-        if self.clauses.iter().any(|clause| clause.eval(assignment).is_none()) {
+        if self
+            .clauses
+            .iter()
+            .any(|clause| clause.eval(assignment).is_none())
+        {
             return None;
         }
 
