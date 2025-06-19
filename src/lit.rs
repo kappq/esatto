@@ -1,14 +1,12 @@
-use crate::var::Var;
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Lit(u32);
 
 impl Lit {
-    pub fn new(var: Var, sign: bool) -> Lit {
+    pub fn new(var: u32, sign: bool) -> Lit {
         Lit(var << 1 | sign as u32)
     }
 
-    pub fn var(self) -> Var {
+    pub fn var(self) -> u32 {
         self.0 >> 1
     }
 
