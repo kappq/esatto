@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{io::BufRead, str::FromStr};
 
 use crate::{clause::Clause, formula::Formula, lit::Lit};
 
@@ -35,18 +35,22 @@ impl std::fmt::Display for ParseError {
 impl std::error::Error for ParseError {}
 
 pub fn parse_dimacs(filename: &str) -> Result<Formula, ParseError> {
-    let contents = std::fs::read_to_string(filename)?;
+    let f = std::fs::File::open(filename)?;
+    let reader = std::io::BufReader::new(f);
+    let lines = reader.lines();
 
     let mut formula = Formula::new();
-    for line in contents.lines() {
-        let tokens = line.split_whitespace().collect::<Vec<_>>();
 
+    for line in lines {
+        let line = line?;
+
+        let tokens = line.split_whitespace().collect::<Vec<_>>();
         match tokens.as_slice() {
-            ["c", ..] => continue,
+            [] | ["c", ..] => continue,
             ["p", "cnf", num_vars_str, num_clauses_str] => {
+                // TODO: check the number of variables and clauses used
                 let _num_vars = u32::from_str(num_vars_str)?;
                 let _num_clauses = u32::from_str(num_clauses_str)?;
-                // TODO: check the number of variables and clauses used
             }
             [lits_str @ .., "0"] => {
                 let mut clause = Clause::new();
