@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Lit(u32);
 
@@ -12,6 +14,10 @@ impl Lit {
 
     pub fn sign(self) -> bool {
         self.0 & 1 == 1
+    }
+
+    pub fn eval(self, assignment: &HashMap<u32, bool>) -> Option<bool> {
+        assignment.get(&self.var()).map(|value| *value == self.sign())
     }
 }
 

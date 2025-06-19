@@ -1,8 +1,10 @@
+use std::collections::HashMap;
+
 use crate::lit::Lit;
 
 #[derive(Debug)]
 pub struct Clause {
-    lits: Vec<Lit>,
+    pub lits: Vec<Lit>,
 }
 
 impl Clause {
@@ -13,6 +15,18 @@ impl Clause {
     pub fn add_literal(&mut self, lit: Lit) {
         self.lits.push(lit);
     }
+
+    pub fn eval(&self, assignment: &HashMap<u32, bool>) -> Option<bool> {
+        if self.lits.iter().any(|lit| lit.eval(assignment) == Some(true)) {
+            return Some(true);
+        }
+
+        if self.lits.iter().any(|lit| lit.eval(assignment).is_none()) {
+            return None;
+        }
+
+        Some(false)
+    }
 }
 
 impl std::fmt::Display for Clause {
@@ -21,7 +35,7 @@ impl std::fmt::Display for Clause {
             .lits
             .iter()
             .map(|lit| lit.to_string())
-            .collect::<Vec<String>>()
+            .collect::<Vec<_>>()
             .join(" ∨ ");
         write!(f, "({})", buf)
     }

@@ -39,14 +39,14 @@ pub fn parse_dimacs(filename: &str) -> Result<Formula, ParseError> {
 
     let mut formula = Formula::new();
     for line in contents.lines() {
-        let tokens = line.split_whitespace().collect::<Vec<&str>>();
+        let tokens = line.split_whitespace().collect::<Vec<_>>();
 
         match tokens.as_slice() {
             ["c", ..] => continue,
             ["p", "cnf", num_vars_str, num_clauses_str] => {
                 let _num_vars = u32::from_str(num_vars_str)?;
                 let _num_clauses = u32::from_str(num_clauses_str)?;
-                // TODO: check the number of variables and clauses
+                // TODO: check the number of variables and clauses used
             }
             [lits_str @ .., "0"] => {
                 let mut clause = Clause::new();

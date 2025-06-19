@@ -1,8 +1,10 @@
+use std::collections::HashMap;
+
 use crate::clause::Clause;
 
 #[derive(Debug)]
 pub struct Formula {
-    clauses: Vec<Clause>,
+    pub clauses: Vec<Clause>,
 }
 
 impl Formula {
@@ -15,6 +17,18 @@ impl Formula {
     pub fn add_clause(&mut self, clause: Clause) {
         self.clauses.push(clause);
     }
+
+    pub fn eval(&self, assignment: &HashMap<u32, bool>) -> Option<bool> {
+        if self.clauses.iter().any(|clause| clause.eval(assignment) == Some(false)) {
+            return Some(false);
+        }
+
+        if self.clauses.iter().any(|clause| clause.eval(assignment).is_none()) {
+            return None;
+        }
+
+        Some(true)
+    }
 }
 
 impl std::fmt::Display for Formula {
@@ -23,7 +37,7 @@ impl std::fmt::Display for Formula {
             .clauses
             .iter()
             .map(|clause| clause.to_string())
-            .collect::<Vec<String>>()
+            .collect::<Vec<_>>()
             .join(" ∧ ");
         write!(f, "{}", buf)
     }
